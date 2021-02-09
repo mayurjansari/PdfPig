@@ -688,6 +688,11 @@
                 return result;
             }
 
+            if (offset == 0 && reference.Generation > ushort.MaxValue)
+            {
+                return new ObjectToken(offset, reference, NullToken.Instance);
+            }
+
             Seek(offset);
 
             if (!MoveNext())
@@ -799,6 +804,13 @@
                 scanner.MoveNext();
 
                 var token = scanner.CurrentToken;
+
+                if (token.Equals(OperatorToken.EndObject))
+                {
+                    scanner.MoveNext();
+
+                    token = scanner.CurrentToken;
+                }
 
                 results.Add(new ObjectToken(offset, new IndirectReference(obj.Item1, 0), token));
             }
